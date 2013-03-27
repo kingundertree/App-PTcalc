@@ -1,0 +1,290 @@
+<header class="header clearfix">
+	<div class="logo fl"><i></i><span>房产交易计税器(卖房版)</span></div>
+	<div class="fr help"><a href="#/help">帮助</a></div>
+</header>
+
+<div class="calc">
+	<form name="sellForm">
+	<!--换算方式：-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">换算方式：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox calType" id="myonoffswitch5" ng-model="calType">
+			    <label class="onoffswitch-label" for="myonoffswitch5">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">到手价到合同价</div>
+			            <div class="onoffswitch-active">合同价到到手价</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+			<!--开关按钮，模拟radio的check事件 end-->
+		</div>
+	</div>
+
+    <!--合同价/到手价-->
+    <div class="inputline clearfix">
+        <div class="inputlinel fl" ng-hide="calType">合同价：</div>
+        <div class="inputlinel fl" ng-show="calType">到手价：</div>
+        <div class="inputliner fl clearfix">
+            <input type="text" class="fl" placeholder="0" name="money" ng-model="money" num-pattern required>
+            <span class="inputdes fl">万</span>
+            <i class="inputcheck fr" ng-show="sellForm.money.$error.numPattern">X</i>
+            <i class="inputcheck fr" ng-show="sellForm.money.$valid">√</i>
+        </div>
+    </div>
+
+	<!--所在区域部分-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">所在区域：</div>
+		<div class="inputliner fl clearfix">
+			<select ng-model="filter.region" class="region" ng-options="r.name for r in filter.regions">
+			</select>
+		</div>
+	</div>
+
+	<!--购入价部分-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">购入价：</div>
+		<div class="inputliner fl clearfix">
+			<input type="text" class="fl" placeholder="0" name="cost" ng-model="cost" num-pattern required>
+			<span class="inputdes fl">万</span>
+			<i class="inputcheck fr" ng-show="sellForm.cost.$error.numPattern">X</i>
+			<i class="inputcheck fr" ng-show="sellForm.cost.$valid">√</i>
+		</div>
+	</div>
+
+	<!--面积部分-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">面积：</div>
+		<div class="inputliner fl clearfix">
+			<input type="text" class="fl" placeholder="0" name="area" ng-model="area" num-pattern required>
+			<span class="inputdesm fl">M<sup>2</sup></span>
+			<i class="inputcheck fr" ng-show="sellForm.area.$error.numPattern">X</i>
+			<i class="inputcheck fr" ng-show="sellForm.area.$valid">√</i>
+		</div>
+	</div>
+
+	<!--房屋性质-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">房屋性质：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox houseType" ng-model="filter.houseType" id="myonoffswitch6">
+			    <label class="onoffswitch-label" for="myonoffswitch6">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">非普通房</div>
+			            <div class="onoffswitch-active">普通房</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+			<!--开关按钮，模拟radio的check事件 end-->
+		</div>
+	</div>
+
+	<!--买入时间-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">买入时间：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox buyTime" ng-model="filter.buyTime" id="myonoffswitch7">
+			    <label class="onoffswitch-label" for="myonoffswitch7">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">不满5年</div>
+			            <div class="onoffswitch-active">满5年</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+			<!--开关按钮，模拟radio的check事件 end-->
+		</div>
+	</div>
+
+	<!--是否唯一-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">唯一：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox isOnly" ng-model="filter.isOnly" id="myonoffswitch8">
+			    <label class="onoffswitch-label" for="myonoffswitch8">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">否</div>
+			            <div class="onoffswitch-active">是</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+			<!--是否唯一 end-->
+		</div>
+	</div>
+
+	<!--是否提供原始发票-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">原始发票：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox hasInvoice" ng-model="filter.hasInvoice" id="myonoffswitch9">
+			    <label class="onoffswitch-label" for="myonoffswitch9">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">不提供</div>
+			            <div class="onoffswitch-active">提供</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+		</div>
+	</div>
+	<!--是否提供原始发票 end-->
+
+	<!--买方国籍-->
+	<div class="inputline clearfix">
+		<div class="inputlinel fl">大陆国籍：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox native" ng-model="native" id="myonoffswitch10">
+			    <label class="onoffswitch-label" for="myonoffswitch10">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">否</div>
+			            <div class="onoffswitch-active">是</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+		</div>
+	</div>
+
+	<!--个人所得税-->
+	<div  class="inputline clearfix" ng-hide="noPersonalTax">
+		<div class="inputlinel fl">个人所得税：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<span class="fl">按</span>
+			<div class="onoffswitch fl" >
+				<div ng-show="profitShow">
+					<input type="radio" name="taxCalType" value="1" ng-model="taxCalType">利润
+				</div>
+				<div ng-show="totalShow">
+					<input type="radio" name="taxCalType" value="2" ng-model="taxCalType">全额
+				</div>
+			</div>
+			<span class="fl">计算</span>
+			<!--个人所得税 end-->
+		</div>
+		<div class="tips">
+			<div class="conner">
+				<em>◆</em>
+				<i>◆</i>
+			</div>
+			<p>各税计算方法，全额2%或者利润20%</p>
+		</div>
+	</div>
+
+	
+	<!--贷款利息-->
+	<div class="inputline clearfix" ng-show="profitShow&&(taxCalType==1)">
+		<div class="inputlinel fl">贷款利息：</div>
+		<div class="inputliner fl clearfix">
+			<input type="text" class="fl" placeholder="0" name="interest" ng-model="interest" num-pattern>
+			<span class="inputdes fl">万</span>
+			<i class="inputcheck fr" ng-show="sellForm.interest.$error.numPattern">X</i>
+		</div>
+	</div>
+	<!--贷款利息 end-->
+
+	<!--装修成本-->
+	<div class="inputline clearfix" ng-show="profitShow&&(taxCalType==1)">
+		<div class="inputlinel fl">装修成本：</div>
+		<div class="inputliner fl clearfix">
+			<input type="text" class="fl" placeholder="0" name="decorationCost" ng-model="decorationCost" num-pattern>
+			<span class="inputdes fl">万</span>
+			<i class="inputcheck fr" ng-show="sellForm.decorationCost.$error.numPattern">X</i>
+		</div>
+	</div>
+	<!--装修成本 end-->
+
+	<!--是否有佣金-->
+	<div class="inputline commissionline clearfix">
+		<div class="inputlinel fl">佣金：</div>
+		<div class="inputliner fl clearfix">
+			<!--开关按钮，模拟radio的check事件-->
+			<div class="onoffswitch">
+			    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox commission" ng-model="commission" id="myonoffswitch12">
+			    <label class="onoffswitch-label" for="myonoffswitch12">
+			        <div class="onoffswitch-inner">
+			            <div class="onoffswitch-inactive">无</div>
+			            <div class="onoffswitch-active">有</div>
+			        </div>
+			        <div class="onoffswitch-switch"></div>
+			    </label>
+			</div>
+			<!--是否有佣金 end-->
+		</div>
+
+		<div class="tips">
+			<div class="conner">
+				<em>◆</em>
+				<i>◆</i>
+			</div>
+			<p>佣金默认为合同价*1%</p>
+		</div>
+	</div>
+	<p class="pbtn"><input type="submit" ng-click="showResult()" value="计算税费" /></p>
+	</form>
+
+<!--结果页：-->
+	<div class="resultarea" ng-show="resultShow">
+		<div ng-hide="calType">
+			<p class="resultp clearfix">
+				<span class="fl resulttit">到手金额：</span>
+				<span class="fr resultprice">{{lastPrice | number:4}}万</span>
+			</p>
+			<p class="resultp clearfix">
+				<span class="fl resulttit">合同价：</span>
+				<span class="fr resultprice">{{payment | number:4}}万</span>
+			</p>
+		</div>
+		<div ng-show="calType">
+			<p class="resultp clearfix">
+				<span class="fl resulttit">合同价：</span>
+				<span class="fr resultprice">{{payment | number:4}}万</span>
+			</p>
+			<p class="resultp clearfix">
+				<span class="fl resulttit">到手金额：</span>
+				<span class="fr resultprice">{{lastPrice | number:4}}万</span>
+			</p>
+		</div>
+		<p class="resultp clearfix">
+			<span class="fl resulttit">税费合计：</span>
+			<span class="fr resultprice">{{totalTax | number:4}}万</span>
+		</p>
+		<hr>
+		<p class="resultp clearfix">
+			<span class="fl resulttit">营业税：</span>
+			<span class="fr resultprice">{{businessTax | number:4}}万</span>
+		</p>
+		<p class="resultp clearfix">
+			<span class="fl resulttit">个税：</span>
+			<span class="fr resultprice">{{incomeTax | number:4}}万</span>
+		</p>
+		<p class="resultp clearfix">
+			<span class="fl resulttit">交易手续费：</span>
+			<span class="fr resultprice">{{tradingFee | number:4}}万</span>
+		</p>
+		<p class="resultp clearfix">
+			<span class="fl resulttit">公证费：</span>
+			<span class="fr resultprice">{{notaryFee | number:4}}万</span>
+		</p>
+		<p class="resultp clearfix">
+			<span class="fl resulttit">佣金：</span>
+			<span class="fr resultprice">{{commissionFee | number:4}}万</span>
+		</p>
+	</div>
+</div>

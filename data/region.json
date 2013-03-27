@@ -1,0 +1,16 @@
+[
+	{"name":"徐汇","regionType":1},
+    {"name": "静安", "regionType": 1},
+    {"name": "长宁", "regionType": 1},
+    {"name": "虹口", "regionType": 1},
+    {"name": "宝山", "regionType": 1},
+    {"name": "普陀", "regionType": 1},
+    {"name": "浦东", "regionType": 2},
+    {"name": "卢湾", "regionType": 2},
+    {"name": "黄浦", "regionType": 2},
+    {"name": "闸北", "regionType": 2},
+    {"name": "闵行", "regionType": 2},
+    {"name": "杨浦", "regionType": 2},
+    {"name": "青浦", "regionType": 2},
+    {"name": "松江", "regionType": 2}
+]

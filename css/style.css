@@ -1,0 +1,207 @@
+.main{ 
+	width: 320px;  
+	background: url(../img/bg.png);}
+.wrap{ 
+	margin: auto; 
+	background: #fff;}
+.header{ 
+	color: #fff; 
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#D2171C),color-stop(0.5,#A71418),color-stop(0.501,#A71418),color-stop(1,#D2171C)); line-height: 40px; height: 45px;}
+.header .logo{ padding-left: 10px;}
+.header .help{ padding-right: 10px;}
+.header a{ color: #fff;}
+
+/*index页面，版本选择入口*/
+.first{ 
+	padding: 70px 0;}
+.first h3{ 
+	text-align: center; 
+	font-size: 26px; 
+	line-height: 45px;}
+.first li{ width: 240px; 
+	height: 45px; 
+	border-radius: 6px; 
+	border:3px solid #999; 
+	margin-top: 30px; 
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#D2171C),color-stop(0.5,#A71418),color-stop(0.501,#A71418),color-stop(1,#D2171C));  box-shadow: 1px 1px 3px #999,-1px -1px 3px #999,-1px -1px 1px #fff inset,1px 1px 1px #fff inset;}
+.first li:hover,.first li:active{ 
+	background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0,#A71418),color-stop(0.5,#D2171C),color-stop(0.501,#D2171C),color-stop(1,#A71418));}
+.first li p a{ 
+	display: block; 
+	text-align: center; 
+	line-height: 45px; 
+	color: #fff; 
+	font-size: 18px; 
+	font: bold;}
+
+/*买房版*/
+.calc{ padding-top: 10px; position: relative;}
+.inputline{ padding: 10px 0 0 0; position: relative;}
+.inputlinel{ 
+	width: 120px; 
+	text-align: right; 
+	line-height: 35px;}
+.commissionline{ height: 60px;}
+.incomeline{ height: 60px;}
+.inputliner{ width: 180px; }
+.inputline input[type="text"]{ 
+	display: block;
+	padding-left: 0.5em; 
+	width: 110px; 
+	height: 30px; 
+	font-size: 20px; 
+	border-radius:8px;  
+	outline: none; 
+	border:1px solid #999;
+	-webkit-appearance: none;}
+.inputline input[type="text"]:focus{
+	border: 1px solid blue;
+}
+.inputline span{ 
+	display: block; 
+	line-height: 35px;}
+.inputline span.inputdesm{
+	display: block;  
+	line-height: 26px;}
+.inputline input[type="text"].error{ border: 1px solid red;}
+.inputcheck{ 
+	display: block; 
+	line-height: 35px; 
+	width: 18px;
+	color: red; 
+	float: right;}
+/*range样式*/
+.inputline input[type="range"]{ 
+	width: 100px; 
+	height: 12px;
+	background: rgba(60, 114, 230, 0.8); 
+	border: 1px solid #333; 
+	-webkit-border-radius: 5px; 
+	margin-top: 9px;
+	-webkit-appearance: none !important; }
+
+.inputline output{ display: block; line-height: 35px; margin-left: 5px;}
+
+.inputline input[type="range"]::-webkit-slider-thumb{ 
+	width: 28px; 
+	height: 28px; 
+	background: -webkit-gradient( 
+	linear, 
+	left top, 
+	left bottom, 
+	from(#fff), 
+	to(#ccc) 
+); 
+
+border: 1px solid #000; 
+	-webkit-box-shadow: 0 0 6px #000; 
+	-webkit-border-radius: 14px; 
+	-webkit-appearance: none !important; 
+} 
+/*range样式 end*/
+
+/*开关按钮css片段*/
+.onoffswitch {
+    position: relative; 
+    width: 120px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; 
+    overflow: hidden; 
+    cursor: pointer;
+    border: 2px solid #999999; 
+    border-radius: 20px;
+}
+.onoffswitch-inner {
+    width: 200%; 
+    margin-right: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner > div {
+    float: right; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner .onoffswitch-active {
+    padding-left: 15px;
+    background-color: red; 
+    color: #FFFFFF;
+   text-align: left;
+}
+.onoffswitch-inner .onoffswitch-inactive {
+    padding-right: 15px;    
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.onoffswitch-switch {
+    width: 18px; 
+    margin: 6px;
+    background: #FFFFFF;
+    border: 2px solid #999999; 
+    border-radius: 20px;
+    position: absolute; top: 0; 
+    bottom: 0; 
+    left: 86px;
+    -moz-transition: all 0.3s ease-in 0s; 
+    -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; 
+    transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: -116px;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    left: 0px; 
+}
+
+/*tips样式*/
+.tips{ 
+	position: absolute; 
+	top: 50px; 
+	left: 110px; 
+	max-width: 280xp; 
+	border-radius:5px; 
+	border:1px solid #999;
+	background: #fff;}
+.tips p{
+	padding: 3px 4px; 
+	font-size: 10px;
+}
+
+/*尖角样式*/
+.conner{
+	position: absolute;
+	top: -6px;
+	left: 50px;
+	height: 6px;
+	width: 12px;
+	font-size: 12px;
+	overflow: hidden;}
+.conner em{ position: absolute; top: 0; left: 0; color: #fff; z-index: 100;}
+.conner i{ position: absolute; top: -1px; left: 0; color: #999; z-index: 99;}
+
+/*easein 动画*/
+.easein{
+	opacity: 1;
+	-webkit-transition: all 5s ease-in;
+	transition: all 5s ease-in;
+}
+
+/*按钮部分*/
+.pbtn{ width: 100%;}
+.pbtn input[type="submit"]{ display: block; margin: 40px auto 0 auto;}
+
+/*结果显示部分*/
+.resultarea{ position:  background: #fff;  width: 320px; height: 440px;}
+.resultp{ height: 20px; line-height: 20px;}
+.resultin{ top: 35px; display: block;}
+
+
+/*卖方版*/
+.region{ height: 35px; font-size: 25px; margin-top: 8px;  line-height: 35px; width: 120px;}
+.inputline .byprofitline span,.inputline .byprofitline input{ display: inline-block; float: left;}

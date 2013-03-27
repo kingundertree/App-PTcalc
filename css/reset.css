@@ -1,0 +1,24 @@
+body,div,p,h1,h2,h3,em,span,a,td,form,input,select,textarea{margin:0;padding:0;font-weight:inherit;font-style:inherit;font-size:100%;}
+h2,h3,em,strong{font-weight:bold;}
+a img{border:none;}
+img{ display:block; padding:0; margin:0;}
+a{color:#000;text-decoration:none;}
+input,select,textarea{vertical-align:middle;}
+input.error,textarea.error,select.error{border:1px dashed red!important;}
+em,dfn,var,cite{font-style:italic}
+code,samp,kbd{font-family:monospace}
+address{font-style:italic;white-space:pre-line}
+hr{border:thin solid #CCC;margin:.5em auto}
+ul,ol,li,dl,dd,dt{list-style-image:none;list-style-position:none;list-style-type:none;}
+ul,ol,li,dl,dd,dt{margin:0 auto;padding:0;}
+blockquote{padding:0 2em}
+caption{border-bottom:thin solid #363534;margin:0 8px;text-align:center}
+.clearfix:before,.clearfix:after{content:"\0020";display:block;height:0;overflow:hidden;}
+.clearfix:after{clear:both;}
+.clearfix{zoom:1;}
+.fl{ float: left;}
+.fr{ float: right;}
+html,body{overflow-x: hidden; background-color: #FFF; -webkit-overflow-scrolling:touch}
+
+.hidden{ display: none;}
+/*input{ -webkit-appearance:none}*/

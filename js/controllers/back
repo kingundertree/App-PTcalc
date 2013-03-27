@@ -1,0 +1,348 @@
+jsq.controller("sellCon", function($scope, $http) {
+  // houseType 普通房-false 非普通房-true
+  // hasInvoice 提供发票-false 不提供-true
+  // buyTime 买入时间满5年-false 不满5年-true
+  // isOnly 唯一-false 不唯一true
+
+  $scope.resultShow = false;
+  var filter = $scope.filter = {
+    region: null
+  };
+
+  // 获取select选择的地区
+  $http.get("data/region.json").success(function(data) {
+    $scope.filter.regions = data;
+    $scope.filter.region = data[0];
+  });
+
+  //计算结果部分
+  $scope.showResult = function() {
+
+    if (!this.sellForm.$valid) {
+       return false;
+    }
+
+    $scope.money = $scope.money ? parseFloat($scope.money) : 0;
+    $scope.cost = $scope.cost ? parseFloat($scope.cost) : 0;
+    $scope.area = $scope.area ? parseFloat($scope.area) : 0;
+
+    // 从合同价算到手价时，到手价初始化为0；从到手价算合同价时，合同价初始化为0
+    if (!$scope.calType) {
+      $scope.payment = $scope.money;
+      $scope.lastPrice = 0;
+      // 购入价<=合同价
+      if ($scope.cost > $scope.payment) {
+          return false;
+      }
+    } else {
+      $scope.lastPrice = $scope.money;
+      $scope.payment = 0;
+      // 到手价<=购入价
+      if ($scope.lastPrice < $scope.cost) {
+          return false;
+      }
+    }
+
+
+    $scope.interest = $scope.interest ? parseFloat($scope.interest) : 0;
+    $scope.decorationCost = $scope.decorationCost ? parseFloat($scope.decorationCost) : 0;
+
+    // 个税全额/利润比例（选择利润时，全额比例=0; 选择全额时，利润比例=0）
+    $scope.taxCalType = ($scope.profitShow || $scope.totalShow) ? $scope.taxCalType : 0;
+    
+    // 房子成本价 = 购入价+贷款利息+装修成本
+    var primaryCost = $scope.cost + $scope.interest + $scope.decorationCost;
+
+    // 交易手续费 = 面积 * 交易手续费比例
+    $scope.tradingFee = tradingFee();
+
+    // 个税全额/利润比例
+    if ($scope.taxCalType == 1) {
+      $scope.perTotalProportion = 0;
+      $scope.perProfitProportion = perProfitProportion();
+    } else if ($scope.taxCalType == 2) {
+      $scope.perTotalProportion = perTotalProportion();
+      $scope.perProfitProportion = 0;
+    } else {
+      $scope.perProfitProportion = 0;
+      $scope.perTotalProportion = 0;
+    }
+
+    // 营业税全额/差额比例
+      var businessTaxProportion = 0;
+      if (totalBusinessTaxType()) {
+        $scope.totalBusinessTaxProportion = totalBusinessTaxType();
+        $scope.diffTaxProportion = 0;
+        businessTaxProportion = $scope.totalBusinessTaxProportion;
+      } else if (diffTaxType()) {
+        $scope.totalBusinessTaxProportion = 0;
+        $scope.diffTaxProportion = diffTaxType();
+        businessTaxProportion = $scope.diffTaxProportion;
+      } else {
+        $scope.totalBusinessTaxProportion = 0;
+        $scope.diffTaxProportion = 0;
+        businessTaxProportion = 0;
+      }
+
+    //选择到手价合同价的计算方式
+    if ($scope.calType) { 
+      // temp1 1-营业税比例-个税全额比例-个税利润比例-佣金比例
+      var temp1 = 1 - businessTaxProportion - $scope.perTotalProportion
+                    - $scope.perProfitProportion - commissionProportionCal();
+      // temp2 = 购入价 * 差额比例 + (购入价 + 装修 + 利润) * 个税利润比例 - 交易手续费
+      var temp2 = $scope.cost * $scope.diffTaxProportion + primaryCost * $scope.perProfitProportion
+                    - $scope.tradingFee;
+      // 合同价(有公证费/无公证费)
+      if (!$scope.native) {
+        $scope.payment = contractPriceCal(temp1, temp2);
+        if ($scope.payment < primaryCost) {
+          $scope.perProfitProportion = 0;
+          $scope.payment = contractPriceCal(temp1, temp2);
+        } 
+      } else {
+        $scope.payment = contractPriceCal2($scope.lastPrice, temp1, temp2);
+        if ($scope.payment < primaryCost) {
+          $scope.payment = contractPriceCal2($scope.lastPrice, temp1, temp2);
+        }
+      }
+    }
+
+    // 公证费
+    $scope.notaryFee = notaryFeeCal();
+    // 个税
+    $scope.incomeTax = incomeTax(primaryCost);
+    // 营业税
+    $scope.businessTax = bussinessTaxCal(businessTaxProportion);
+   
+    // 佣金 = 合同价 * 佣金比例
+    $scope.commissionFee = $scope.payment * commissionProportionCal();
+
+    // 总税费
+    $scope.totalTax = $scope.businessTax + $scope.incomeTax + $scope.tradingFee
+      + $scope.commissionFee + $scope.notaryFee;
+
+    // 到手价
+    if (!$scope.calType) {
+      $scope.lastPrice = $scope.payment - $scope.totalTax;
+    }
+
+    //显示结果内容
+    $scope.resultShow = true;
+
+    console.log("合同价", $scope.payment);
+    console.log("到手价", $scope.lastPrice);
+    console.log("总税费", $scope.totalTax);
+    console.log("营业税", $scope.businessTax);
+    console.log("个税", $scope.incomeTax);
+    console.log("交易手续费", $scope.tradingFee);
+    console.log("公证费", $scope.notaryFee);
+    console.log("佣金", $scope.commissionFee);
+  }
+
+// 个税计算 = 合同价 * 个税全额比例 + (合同价 - 购入价 - 装修成本 - 贷款利息) * 个税利润比例
+  function incomeTax(primaryCost) {
+    var incomeTax = 0;
+    if ($scope.payment - primaryCost <= 0) {
+        incomeTax = 0;
+    }   else {
+        incomeTax = $scope.payment * $scope.perTotalProportion
+            + ($scope.payment - primaryCost) * $scope.perProfitProportion;
+    }
+    return incomeTax;
+  }
+
+
+
+// 合同价=(到手价-购入价*差额比例+交易手续费-(购入价+贷款利息+装修成本)*个税利润比例)/(1-营业税全额比例-个税全额比例-个税利润比例-佣金比例)
+  function contractPriceCal(temp1, temp2) {
+    return ($scope.lastPrice - temp2) / temp1;
+  }
+
+// 有公证费时算合同价
+  function contractPriceCal2(lastPrice, temp1, temp2) {
+    // 公证费比例
+    var notaryTaxProportion = 0;
+    // 公证费常量
+    var notaryTaxNum = 0;
+    if (lastPrice <= 6.6666 * temp1 + temp2 - 0.02) {
+      notaryTaxProportion = 0;
+      notaryTaxNum = 0.02
+    }else if (lastPrice <= 50 * (temp1 - 0.003) + temp2) {
+      notaryTaxProportion = 0.003;
+      notaryTaxNum = 0;
+    }else if (lastPrice <= 500 * (temp1 - 0.0025) + temp2 - 0.025) {
+      notaryTaxProportion = 0.0025;
+      notaryTaxNum = 0.025;
+    }else if (lastPrice <= 1000 * (temp1 - 0.002) + temp2 - 0.275) {
+      notaryTaxProportion = 0.002;
+      notaryTaxNum = 0.275;
+    }else if (lastPrice <= 2000 *(temp1 - 0.0015) + temp2 - 0.775) {
+      notaryTaxProportion = 0.0015;
+      notaryTaxNum = 0.775;
+    }else if (lastPrice <= 5000 * (temp1 - 0.001) + temp2 - 1.775) {
+      notaryTaxProportion = 0.001;
+      notaryTaxNum = 1.775;
+    }else{
+      notaryTaxProportion =0.0005;
+      notaryTaxNum = 4.275;
+    }
+    return (lastPrice - temp2 + notaryTaxNum) / (temp1 - notaryTaxProportion);
+  }
+
+// 个税全额时 -- 全额计算系数
+  function perTotalProportion() {
+    // 普通住宅 + 无发票 个税按照全额1%计算
+    if (!$scope.filter.houseType && $scope.filter.hasInvoice) {
+      return 0.01;
+    }
+    // 非普通住宅 + 五年内 个税按照全额2%计算
+    if ($scope.filter.houseType && $scope.filter.buyTime) {
+      return 0.02;
+    }
+    // 非普通住宅 + 五年外 + 不提供原始发票 个税按照全额2%计算
+    if ($scope.filter.houseType && !$scope.filter.buyTime && $scope.filter.hasInvoice) {
+      return 0.02;
+    }
+    // 非普通住宅 + 五年外 + 提供发票 + 不承诺唯一 + 徐汇/静安/长宁/虹口/宝山/普陀）地区，个税按照全额2%计算
+    if ($scope.filter.houseType && !$scope.filter.buyTime && !$scope.filter.hasInvoice && $scope.filter.isOnly && ($scope.filter.region.regionType=="2")) {
+      return 0.02;
+    }
+    return 0;
+  }
+
+// 个税免征 优先判断
+  function noPersonalTax() {
+    // 普通住宅 + 五年以外 + 承诺唯一
+    if (!$scope.filter.houseType && !$scope.filter.buyTime && !$scope.filter.isOnly) {
+      return true;
+    }
+    // 非普通住宅 + 五年以外 + 提供发票 + 承诺唯一
+    if ($scope.filter.houseType && !$scope.filter.buyTime && !$scope.filter.hasInvoice && !$scope.filter.isOnly) {
+      return true;
+    }
+    return false;
+  } 
+
+// 个税利润 -- 利润系数为20%
+  function perProfitProportion() {
+    // 普通住宅 + 提供发票 
+    if (!$scope.filter.houseType && !$scope.filter.hasInvoice) {
+      return 0.2;
+    }
+    // 非普通住宅 + 五年内
+    if ($scope.filter.houseType && $scope.filter.buyTime) {
+      return 0.2;
+    }
+    // 非普通住宅 + 五年外 + 提供发票 + 不承诺唯一
+    if ($scope.filter.houseType && !$scope.filter.buyTime && !$scope.filter.hasInvoice && $scope.filter.isOnly) {
+      return 0.2;
+    }
+    return 0;
+  }
+
+// 个人所得税计算方式 -- 利润/全额/免征
+  $scope.$watch('filter', function(){
+    // 免征时不在页面显示个人所得税选项
+    $scope.noPersonalTax = noPersonalTax();
+    if (!$scope.noPersonalTax) {
+      $scope.profitShow = perProfitProportion() ? true : false;
+      $scope.totalShow = perTotalProportion() ? true : false;
+      if ($scope.profitShow && $scope.totalShow) {
+        $scope.taxCalType = 2;
+      } else {
+        $scope.taxCalType = $scope.profitShow ? 1 : ($scope.totalShow ? 2 : 0);
+      }
+    } else {
+      $scope.profitShow = false;
+      $scope.totalShow = false;
+    }
+  }, true);
+
+  // 计算方式改变时，清空输入的合同价/到手价值
+  $scope.$watch("calType", function() {
+      $scope.money = "";
+  });
+
+// 监控利润/金额两个选择
+  $scope.$watch('taxCalType', function(){
+    $scope.byProfit = ($scope.taxCalType == 1) ? true : false;
+  }, true);
+
+// 营业税计算 = 合同价*营业税比例 - 购入价*差额比例
+  function bussinessTaxCal(businessTaxProportion) {
+    var businessTax = 0;
+    if (totalBusinessTaxType()) {
+      businessTax = $scope.payment * totalBusinessTaxType();
+    } else if (diffTaxType()) {
+      businessTax = ($scope.payment - $scope.cost) * diffTaxType();
+    } 
+    return businessTax;
+  }
+
+// 营业税--全额系数
+  function totalBusinessTaxType() {
+    //普通住宅，且五年内，则营业税为全额的5.65%
+    if (!$scope.filter.houseType && $scope.filter.buyTime) {
+      return 0.0565;
+    }
+    //非普通住宅 + 五年内,全额5.65%
+    if ($scope.filter.houseType && $scope.filter.buyTime) {
+      return 0.0565;
+    }
+    ///非普通住宅 + 五年外 + 不提供发票，全额5.65%
+    if ($scope.filter.houseType && !$scope.filter.buyTime && $scope.filter.hasInvoice) {
+      return 0.0565;
+    }
+    return 0;
+  }
+
+// 营业税--差额系数
+  function diffTaxType() {
+    //非普通住宅 + 五年外 + 提供发票， 差额的5.65%
+    if ($scope.filter.houseType && !$scope.filter.buyTime && !$scope.filter.hasInvoice) {
+      return 0.0565;
+    };
+    return 0;
+  }
+
+//交易手续费费
+    function tradingFee(){
+        return $scope.area * tradingFeeProportionCal();
+    }
+
+// 交易手续费比例
+  function tradingFeeProportionCal() {
+    return 0.00025;
+  }
+
+// 佣金比例
+  function commissionProportionCal() {
+    return $scope.commission ? 0 : 0.01;
+  }
+
+//公证费
+  function notaryFeeCal(){ 
+    //大陆，则无公证费
+    if (!$scope.native) return 0; 
+
+    var notaryFee = 0;
+    if ($scope.payment <= 50) {
+      if ($scope.payment * 0.003 < 0.02) {
+        notaryFee = 0.02;
+      } else {
+        notaryFee = $scope.payment * 0.003;
+      }
+    } else if ($scope.payment <= 500){
+      notaryFee = $scope.payment * 0.0025 + 0.025;
+    } else if ($scope.payment <= 1000) {
+      notaryFee = $scope.payment * 0.002 + 0.275;
+    } else if ($scope.payment <= 2000) {
+      notaryFee = $scope.payment * 0.0015 + 0.775;
+    } else if ($scope.payment <= 5000) {
+      notaryFee = $scope.payment * 0.001 + 1.775;
+    } else {
+      notaryFee = $scope.payment * 0.0005 + 4.275;
+    }
+    return notaryFee;
+  }
+});
